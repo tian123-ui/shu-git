@@ -2,8 +2,8 @@
 use tms;
 
 -- 7.1 运单表（增量表）
-drop table if exists ods_order_info_full;
-create external table ods_order_info_full(
+drop table if exists ods_order_info_inc;
+create external table ods_order_info_inc(
      `op` string comment '操作类型',
      `after` struct<`id`:bigint,`order_no`:string,`status`:string,`collect_type`:string,`user_id`:bigint,`receiver_complex_id`:bigint,`receiver_province_id`:string,`receiver_city_id`:string,`receiver_district_id`:string,`receiver_address`:string,`receiver_name`:string,`sender_complex_id`:bigint,`sender_province_id`:string,`sender_city_id`:string,`sender_district_id`:string,`sender_name`:string,`payment_type`:string,`cargo_num`:bigint,`amount`:decimal(16,2),`estimate_arrive_time`:string,`distance`:decimal(16,2),`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改或插入后的数据',
      `before` struct<`id`:bigint,`order_no`:string,`status`:string,`collect_type`:string,`user_id`:bigint,`receiver_complex_id`:bigint,`receiver_province_id`:string,`receiver_city_id`:string,`receiver_district_id`:string,`receiver_address`:string,`receiver_name`:string,`sender_complex_id`:bigint,`sender_province_id`:string,`sender_city_id`:string,`sender_district_id`:string,`sender_name`:string,`payment_type`:string,`cargo_num`:bigint,`amount`:decimal(16,2),`estimate_arrive_time`:string,`distance`:decimal(16,2),`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改前的数据',
@@ -11,14 +11,14 @@ create external table ods_order_info_full(
 ) comment '运单表'
     partitioned by (`dt` string comment '统计日期')
     ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
-    location '/warehouse/tms/ods/ods_order_info_full';
+    location '/warehouse/tms/ods/ods_order_info_inc';
 
-select * from ods_order_info_full;
+select * from ods_order_info_inc;
 
 
 -- 7.2 运单明细表（增量表）
-drop table if exists ods_order_cargo_full;
-create external table ods_order_cargo_full(
+drop table if exists ods_order_cargo_inc;
+create external table ods_order_cargo_inc(
                                              `op` string comment '操作类型',
                                              `after` struct<`id`:bigint,`order_id`:string,`cargo_type`:string,`volume_length`:bigint,`volume_width`:bigint,`volume_height`:bigint,`weight`:decimal(16,2),`create_time`:string,`update_time`:string,`is_deleted`:string> comment '插入或修改后的数据',
                                              `before` struct<`id`:bigint,`order_id`:string,`cargo_type`:string,`volumn_length`:bigint,`volumn_width`:bigint,`volumn_height`:bigint,`weight`:decimal(16,2),`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改前的数据',
@@ -26,14 +26,14 @@ create external table ods_order_cargo_full(
 ) comment '运单明细表'
     partitioned by (`dt` string comment '统计日期')
     ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
-    location '/warehouse/tms/ods/ods_order_cargo_full';
+    location '/warehouse/tms/ods/ods_order_cargo_inc';
 
-select * from ods_order_cargo_full;
+select * from ods_order_cargo_inc;
 
 
 -- 7.3 运输任务表（增量表）
-drop table if exists ods_transport_task_full;
-create external table ods_transport_task_full(
+drop table if exists ods_transport_task_inc;
+create external table ods_transport_task_inc(
                                                 `op` string comment '操作类型',
                                                 `after` struct<`id`:bigint,`shift_id`:bigint,`line_id`:bigint,`start_org_id`:bigint,`start_org_name`:string,`end_org_id`:bigint,`end_org_name`:string,`status`:string,`order_num`:bigint,`driver1_emp_id`:bigint,`driver1_name`:string,`driver2_emp_id`:bigint,`driver2_name`:string,`truck_id`:bigint,`truck_no`:string,`actual_start_time`:string,`actual_end_time`:string,`actual_distance`:decimal(16,2),`create_time`:string,`update_time`:string,`is_deleted`:string> comment '插入或修改后的数据',
                                                 `before` struct<`id`:bigint,`shift_id`:bigint,`line_id`:bigint,`start_org_id`:bigint,`start_org_name`:string,`end_org_id`:bigint,`end_org_name`:string,`status`:string,`order_num`:bigint,`driver1_emp_id`:bigint,`driver1_name`:string,`driver2_emp_id`:bigint,`driver2_name`:string,`truck_id`:bigint,`truck_no`:string,`actual_start_time`:string,`actual_end_time`:string,`actual_distance`:decimal(16,2),`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改前的数据',
@@ -41,14 +41,14 @@ create external table ods_transport_task_full(
 ) comment '运输任务表'
     partitioned by (`dt` string comment '统计日期')
     ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
-    location '/warehouse/tms/ods/ods_transport_task_full';
+    location '/warehouse/tms/ods/ods_transport_task_inc';
 
-select * from ods_transport_task_full;
+select * from ods_transport_task_inc;
 
 
 -- 7.4 运单机构中转表（增量表）
-drop table if exists ods_order_org_bound_full;
-create external table ods_order_org_bound_full(
+drop table if exists ods_order_org_bound_inc;
+create external table ods_order_org_bound_inc(
                                                  `op` string comment '操作类型',
                                                  `after` struct<`id`:bigint,`order_id`:bigint,`org_id`:bigint,`status`:string,`inbound_time`:string,`inbound_emp_id`:bigint,`sort_time`:string,`sorter_emp_id`:bigint,`outbound_time`:string,`outbound_emp_id`:bigint,`create_time`:string,`update_time`:string,`is_deleted`:string> comment '插入或修改后的数据',
                                                  `before` struct<`id`:bigint,`order_id`:bigint,`org_id`:bigint,`status`:string,`inbound_time`:string,`inbound_emp_id`:bigint,`sort_time`:string,`sorter_emp_id`:bigint,`outbound_time`:string,`outbound_emp_id`:bigint,`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改之前的数据',
@@ -56,14 +56,14 @@ create external table ods_order_org_bound_full(
 ) comment '运单机构中转表'
     partitioned by (`dt` string comment '统计日期')
     ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
-    location '/warehouse/tms/ods/ods_order_org_bound_full';
+    location '/warehouse/tms/ods/ods_order_org_bound_inc';
 
-select * from ods_order_org_bound_full;
+select * from ods_order_org_bound_inc;
 
 
 -- 7.5 用户信息表（增量表）
-drop table if exists ods_user_info_full;
-create external table ods_user_info_full(
+drop table if exists ods_user_info_inc;
+create external table ods_user_info_inc(
                                            `op` string comment '操作类型',
                                            `after` struct<`id`:bigint,`login_name`:string,`nick_name`:string,`passwd`:string,`real_name`:string,`phone_num`:string,`email`:string,`user_level`:string,`birthday`:string,`gender`:string,`create_time`:string,`update_time`:string,`is_deleted`:string> comment '插入或修改后的数据',
                                            `before` struct<`id`:bigint,`login_name`:string,`nick_name`:string,`passwd`:string,`real_name`:string,`phone_num`:string,`email`:string,`user_level`:string,`birthday`:string,`gender`:string,`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改之前的数据',
@@ -71,14 +71,14 @@ create external table ods_user_info_full(
 ) comment '用户信息表'
     partitioned by (`dt` string comment '统计日期')
     ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
-    location '/warehouse/tms/ods/ods_user_info_full';
+    location '/warehouse/tms/ods/ods_user_info_inc';
 
-select * from ods_user_info_full;
+select * from ods_user_info_inc;
 
 
 -- 7.6 用户地址表（增量表）
-drop table if exists ods_user_address_full;
-create external table ods_user_address_full(
+drop table if exists ods_user_address_inc;
+create external table ods_user_address_inc(
                                               `op` string comment '操作类型',
                                               `after` struct<`id`:bigint,`user_id`:bigint,`phone`:string,`province_id`:bigint,`city_id`:bigint,`district_id`:bigint,`complex_id`:bigint,`address`:string,`is_default`:string,`create_time`:string,`update_time`:string,`is_deleted`:string> comment '插入或修改后的数据',
                                               `before` struct<`id`:bigint,`user_id`:bigint,`phone`:string,`province_id`:bigint,`city_id`:bigint,`district_id`:bigint,`complex_id`:bigint,`address`:string,`is_default`:string,`create_time`:string,`update_time`:string,`is_deleted`:string> comment '修改之前的数据',
@@ -86,9 +86,9 @@ create external table ods_user_address_full(
 ) comment '用户地址表'
     partitioned by (`dt` string comment '统计日期')
     ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.JsonSerDe'
-    location '/warehouse/tms/ods/ods_user_address_full';
+    location '/warehouse/tms/ods/ods_user_address_inc';
 
-select * from ods_user_address_full;
+select * from ods_user_address_inc;
 
 
 -- 7.7 小区表（全量表）

@@ -1,9 +1,14 @@
--- 1. 小区维度表
--- base_complex
--- base_region_info
--- express_courier_complex
-drop table if exists dim_complex_full;
-create external table dim_complex_full(
+
+use tms;
+
+--TODO：1. dim_complex
+-- 8.1 小区维度表
+-- 8.1.1 建表语句
+-- select * from ods_base_complex;
+-- select * from ods_base_region_info;
+-- select * from ods_express_courier_complex;
+drop table if exists dim_complex;
+create external table dim_complex(
                                           `id` bigint comment '小区ID',
                                           `complex_name` string comment '小区名称',
                                           `courier_emp_id` string comment '负责快递员ID',
@@ -16,14 +21,18 @@ create external table dim_complex_full(
 ) comment '小区维度表'
     partitioned by (`dt` string comment '统计日期')
     stored as orc
-    location '/warehouse/tms/dim/dim_complex_full'
+    location '/warehouse/tms/dim/dim_complex'
     tblproperties('orc.compress'='snappy');
+select * from dim_complex;
 
--- 2. 机构维度表
--- base_organ
--- base_region_info
-drop table if exists dim_organ_full;
-create external table dim_organ_full(
+
+--TODO： 2. dim_organ
+-- 8.2 机构维度表
+-- 8.2.1 建表语句
+-- select * from ods_base_organ;
+-- select * from ods_base_region_info;
+drop table if exists dim_organ;
+create external table dim_organ(
                                         `id` bigint COMMENT '机构ID',
                                         `org_name` string COMMENT '机构名称',
                                         `org_level` bigint COMMENT '机构等级（1为转运中心，2为转运站）',
@@ -35,13 +44,17 @@ create external table dim_organ_full(
 ) comment '机构维度表'
     partitioned by (`dt` string comment '统计日期')
     stored as orc
-    location '/warehouse/tms/dim/dim_organ_full'
+    location '/warehouse/tms/dim/dim_organ'
     tblproperties('orc.compress'='snappy');
+select * from dim_organ;
 
--- 3. 地区维度表
--- base_region_info
-drop table if exists dim_region_full;
-create external table dim_region_full(
+
+--TODO： 3. dim_region
+-- 8.3 地区维度表
+-- 8.3.2 数据装载
+-- select * from ods_base_region_info;
+drop table if exists dim_region;
+create external table dim_region(
                                          `id` bigint COMMENT '地区ID',
                                          `parent_id` bigint COMMENT '上级地区ID',
                                          `name` string COMMENT '地区名称',
@@ -50,15 +63,19 @@ create external table dim_region_full(
 ) comment '地区维度表'
     partitioned by (`dt` string comment '统计日期')
     stored as orc
-    location '/warehouse/tms/dim/dim_region_full'
+    location '/warehouse/tms/dim/dim_region'
     tblproperties('orc.compress'='snappy');
+select * from dim_region;
 
--- 4. 快递员维度表
--- express_courier
--- base_organ
--- base_dic
-drop table if exists dim_express_courier_full;
-create external table dim_express_courier_full(
+
+--TODO： 4. dim_express_courier
+-- 8.4 快递员维度表
+-- 8.4.1 建表语句
+-- select * from ods_express_courier;
+-- select * from ods_base_organ;
+-- select * from ods_base_dic;
+drop table if exists dim_express_courier;
+create external table dim_express_courier(
                                                   `id` bigint COMMENT '快递员ID',
                                                   `emp_id` bigint COMMENT '员工ID',
                                                   `org_id` bigint COMMENT '所属机构ID',
@@ -69,15 +86,19 @@ create external table dim_express_courier_full(
 ) comment '快递员维度表'
     partitioned by (`dt` string comment '统计日期')
     stored as orc
-    location '/warehouse/tms/dim/dim_express_courier_full'
+    location '/warehouse/tms/dim/dim_express_courier'
     tblproperties('orc.compress'='snappy');
+select * from dim_express_courier;
 
--- 5. 班次维度表
--- line_base_shift
--- line_base_info
--- base_dic
-drop table if exists dim_shift_full;
-create external table dim_shift_full(
+
+--TODO: 5. dim_shift
+-- 8.5 班次维度表
+-- 8.5.1 建表语句
+-- select * from ods_line_base_shift;
+-- select * from ods_line_base_info;
+-- select * from ods_base_dic;
+drop table if exists dim_shift;
+create external table dim_shift(
                                         `id` bigint COMMENT '班次ID',
                                         `line_id` bigint COMMENT '线路ID',
                                         `line_name` string COMMENT '线路名称',
@@ -102,15 +123,19 @@ create external table dim_shift_full(
 ) comment '班次维度表'
     partitioned by (`dt` string comment '统计周期')
     stored as orc
-    location '/warehouse/tms/dim/dim_shift_full'
+    location '/warehouse/tms/dim/dim_shift'
     tblproperties('orc.compress'='snappy');
+select * from dim_shift;
 
--- 6. 司机维度表
--- truck_driver
--- base_organ
--- truck_team
-drop table if exists dim_truck_driver_full;
-create external table dim_truck_driver_full(
+
+--TODO: 6. dim_truck_driver
+-- 8.6 司机维度表
+-- 8.6.1 建表语句
+select * from ods_truck_driver;
+select * from ods_base_organ;
+select * from ods_truck_team;
+drop table if exists dim_truck_driver;
+create external table dim_truck_driver(
                                                `id` bigint COMMENT '司机信息ID',
                                                `emp_id` bigint COMMENT '员工ID',
                                                `org_id` bigint COMMENT '所属机构ID',
@@ -125,17 +150,21 @@ create external table dim_truck_driver_full(
 ) comment '司机维度表'
     partitioned by (`dt` string comment '统计日期')
     stored as orc
-    location '/warehouse/tms/dim/dim_truck_driver_full'
+    location '/warehouse/tms/dim/dim_truck_driver'
     tblproperties('orc.compress'='snappy');
+select * from dim_truck_driver;
 
--- 7. 卡车维度表
--- truck_info
--- truck_model
--- truck_team
--- base_organ
--- base_dic
-drop table if exists dim_truck_full;
-create external table dim_truck_full(
+
+--TODO: 7. dim_truck
+-- 8.7 卡车维度表
+-- 8.7.1 建表语句
+-- select * from ods_truck_info;
+-- select * from ods_truck_team;
+-- select * from ods_truck_model;
+-- select * from ods_base_organ;
+-- select * from ods_base_dic;
+drop table if exists dim_truck;
+create external table dim_truck(
                                         `id` bigint COMMENT '卡车ID',
                                         `team_id` bigint COMMENT '所属车队ID',
                                         `team_name` string COMMENT '所属车队名称',
@@ -169,11 +198,15 @@ create external table dim_truck_full(
 ) comment '卡车维度表'
     partitioned by (`dt` string comment '统计日期')
     stored as orc
-    location '/warehouse/tms/dim/dim_truck_full'
+    location '/warehouse/tms/dim/dim_truck'
     tblproperties('orc.compress'='snappy');
+select * from dim_truck;
 
--- 8. 用户拉链表
--- user_info
+
+--TODO： 8. dim_user_zip
+-- 8.8 用户维度表
+-- 8.8.1 建表语句
+-- select * from ods_user_info;
 drop table if exists dim_user_zip;
 create external table dim_user_zip(
                                       `id` bigint COMMENT '用户地址信息ID',
@@ -193,9 +226,13 @@ create external table dim_user_zip(
     stored as orc
     location '/warehouse/tms/dim/dim_user_zip'
     tblproperties('orc.compress'='snappy');
+select * from dim_user_zip;
 
--- 9. 用户地址拉链表
--- user_address
+
+--TODO： 9. dim_user_address_zip
+-- 8.9 用户地址维度表
+-- 8.9.1 建表语句
+-- select * from ods_user_address;
 drop table if exists dim_user_address_zip;
 create external table dim_user_address_zip(
                                               `id` bigint COMMENT '地址ID',
@@ -214,3 +251,4 @@ create external table dim_user_address_zip(
     stored as orc
     location '/warehouse/tms/dim/dim_user_address_zip'
     tblproperties('orc.compress'='snappy');
+select * from dim_user_address_zip;
