@@ -1,0 +1,6 @@
+device_id,terminal_type,device_identifier,device_brand
+1,无线端,iOS,Apple
+2,无线端,Android,Huawei
+3,无线端,Android,Xiaomi
+4,PC端,Windows,Dell
+5,PC端,macOS,Apple
