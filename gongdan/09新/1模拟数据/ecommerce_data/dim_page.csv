@@ -1,0 +1,11 @@
+﻿page_id,page_name,page_type,page_subtype
+1,首页,store_page,首页
+2,活动页,store_page,活动页
+3,分类页,store_page,分类页
+4,宝贝页,store_page,宝贝页
+5,新品页,store_page,新品页
+6,商品详情页,product_detail,商品详情页
+7,订阅页,other_page,订阅页
+8,直播页,other_page,直播页
+9,购物车,other_page,购物车
+10,结算页,other_page,结算页
