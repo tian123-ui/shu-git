@@ -1,0 +1,56 @@
+﻿测试ID,测试名称,测试SQL,预期结果,实际结果,测试结果,测试时间
+TB-01,验证视图ads_customer_service_performance_layered存在性,注册视图 ads_customer_service_performance_layered 来自 ads_customer_service_performance_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-02,验证视图ads_customer_service_performance_non_layered存在性,注册视图 ads_customer_service_performance_non_layered 来自 ads_customer_service_performance_non_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-03,验证视图ads_customer_service_promo_activity_effect_layered存在性,注册视图 ads_customer_service_promo_activity_effect_layered 来自 ads_customer_service_promo_activity_effect_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-04,验证视图ads_customer_service_promo_activity_effect_non_layered存在性,注册视图 ads_customer_service_promo_activity_effect_non_layered 来自 ads_customer_service_promo_activity_effect_non_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-05,验证视图ads_customer_service_promo_overview_layered存在性,注册视图 ads_customer_service_promo_overview_layered 来自 ads_customer_service_promo_overview_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-06,验证视图ads_customer_service_promo_overview_non_layered存在性,注册视图 ads_customer_service_promo_overview_non_layered 来自 ads_customer_service_promo_overview_non_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-07,验证视图ads_customer_service_promo_time_trend_non_layered存在性,注册视图 ads_customer_service_promo_time_trend_non_layered 来自 ads_customer_service_promo_time_trend_non_layered_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+TB-08,验证视图dws_customer_rfm_layer存在性,注册视图 dws_customer_rfm_layer 来自 dws_customer_rfm_layer_merged.csv,视图存在,视图存在,通过,2025-08-09 10:38:05
+OV-01,总发送量分层与不分层一致性,"不分层SQL: 
+            SELECT total_send_count 
+            FROM ads_customer_service_promo_overview_non_layered 
+            WHERE period_type='all'
+        
+分层SQL: 
+            SELECT SUM(total_send_count) 
+            FROM ads_customer_service_promo_overview_layered
+        ",相等(100),100 vs 100,通过,2025-08-09 10:38:05
+AC-01,活动发送量分层与不分层一致性,"
+            SELECT 
+                a.activity_id, 
+                a.send_count as non_layered_send,
+                b.total_send as layered_send
+            from ads_customer_service_promo_activity_effect_non_layered a
+            join (
+                select activity_id, sum(send_count) total_send
+                from ads_customer_service_promo_activity_effect_layered
+                group by activity_id
+            ) b on a.activity_id = b.activity_id
+            where abs(a.send_count - b.total_send) > 0.001
+        ",0条差异记录,0条差异记录,通过,2025-08-09 10:38:05
+CS-01,客服转化率分层与不分层一致性,"
+            select 
+                abs(
+                    sum(a.use_count)/nullif(sum(a.send_count),0) - 
+                    sum(b.use_count)/nullif(sum(b.send_count),0)
+                ) as conv_diff
+            from ads_customer_service_performance_non_layered a
+            join (
+                select 
+                    customer_service_id, 
+                    sum(send_count) send_count, 
+                    sum(use_count) use_count
+                from ads_customer_service_performance_layered
+                group by customer_service_id
+            ) b on a.customer_service_id = b.customer_service_id
+        ",差异<0.001,差异值: 0,通过,2025-08-09 10:38:05
+RF-01,RFM分层规则验证,"
+            select count(*) as error_count
+            from dws_customer_rfm_layer
+            where 
+                (rfm_total > 12 and user_level != '高价值用户') or
+                (rfm_total > 8 and rfm_total <= 12 and user_level != '潜力用户') or
+                (rfm_total > 5 and rfm_total <= 8 and user_level != '一般用户') or
+                (rfm_total <= 5 and user_level != '流失用户')
+        ",0条错误分层记录,0条错误分层记录,通过,2025-08-09 10:38:05
